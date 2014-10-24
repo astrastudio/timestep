@@ -89,10 +89,10 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		}
 
 		// TODO: support partial repaints?
-		// if (this._view._needsRepaint) {
-		// 	this._view._needsRepaint = false;
-		// 	app.needsRepaint();
-		// }
+		if (this._view._needsRepaint) {
+			this._view._needsRepaint = false;
+			app.needsRepaint();
+		}
 	}
 
 	this.wrapRender = function (ctx, opts) {
