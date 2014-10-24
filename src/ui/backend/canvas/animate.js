@@ -264,7 +264,7 @@ var ViewStyleFrame = Class(Frame, function () {
 			}
 		}
 
-		// this.subject.needsRepaint();
+		this.subject.needsRepaint();
 
 		if (debug) {
 			var changed = {};
