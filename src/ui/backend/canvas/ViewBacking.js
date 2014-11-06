@@ -26,6 +26,16 @@ import util.setProperty as setProperty;
 
 var _styleKeys = {};
 
+function setNeedsRerenderToSubviews (superview) {
+	var subviews = superview._subviews;
+	var i = subviews.length;
+
+	while (view = subviews[i++]) {
+		view._needsRerender = true;
+		setNeedsRerenderToSubviews(view);	
+	}	
+}
+
 var ViewBacking = exports = Class(BaseBacking, function () {
 
 	this.constructor.absScale = 1;
@@ -33,6 +43,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	this.init = function (view) {
 		this._view = view;
 		this._subviews = [];
+		this._needsRerender = true;
 	}
 
 	this.getSuperview = function () { return this._superview; }
@@ -91,12 +102,39 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		// TODO: support partial repaints?
 		if (this._view._needsRepaint) {
 			this._view._needsRepaint = false;
+			//debugger;
 			app.needsRepaint();
+			this.setNeedsRerenderToSuperViews();
+			setNeedsRerenderToSubviews(this._view.__view);
+			this._view._needsRerender = true;
+		}
+	}
+
+	this.setNeedsRerenderToSuperViews = function () {
+		var superview = this._superview; //or this._view._superview;
+
+		while (superview) {
+
+			if (superview == superview._superview) {
+				break;
+			}
+			superview._needsRerender = true;
+
+			superview = superview._superview;
 		}
 	}
 
 	this.wrapRender = function (ctx, opts) {
 		if (!this.visible) { return; }
+
+		if (!this._view._needsRerender) {
+			//console.log('abended');
+			return;
+		}
+		//console.log('render is called');
+		//this.__firstRender = true;
+		//61 - 78 level
+		this._view._needsRerender = false;
 
 		if (!this.__firstRender) { this._view.needsReflow(true); }
 		if (this._needsSort) { this._needsSort = false; this._subviews.sort(); }
@@ -160,11 +198,14 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		try {
 			if (this.backgroundColor) {
 				ctx.fillStyle = this.backgroundColor;
-				ctx.fillRect(0, 0, width, height);
+				//ctx.fillRect(0, 0, width, height);
 			}
 
 			var viewport = opts.viewport;
-			this._view.render && this._view.render(ctx, opts);
+			//this._view.render && this._view.render(ctx, opts);
+			if (this._view.render ) {
+				this._view.render(ctx, opts);
+			}
 			this._renderSubviews(ctx, opts);
 			opts.viewport = viewport;
 
@@ -180,7 +221,10 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		var view;
 		var subviews = this._subviews;
 		while (view = subviews[i++]) {
-			view.wrapRender(ctx, opts);
+			//if (view._needsRerender) {
+				view.wrapRender(ctx, opts);	
+			//}
+			
 		}
 	}
 
