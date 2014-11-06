@@ -32,6 +32,7 @@ function setNeedsRerenderToSubviews (superview) {
 
 	while (view = subviews[i++]) {
 		view._needsRerender = true;
+		view._canFillRect = true;
 		setNeedsRerenderToSubviews(view);	
 	}	
 }
@@ -43,7 +44,8 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	this.init = function (view) {
 		this._view = view;
 		this._subviews = [];
-		this._needsRerender = true;
+		this._view._needsRerender = true;
+		this._view._canFillRect = true;
 	}
 
 	this.getSuperview = function () { return this._superview; }
@@ -107,6 +109,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			this.setNeedsRerenderToSuperViews();
 			setNeedsRerenderToSubviews(this._view.__view);
 			this._view._needsRerender = true;
+			this._view._canFillRect = true;
 		}
 	}
 
@@ -196,10 +199,11 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		}
 
 		try {
-			if (this.backgroundColor) {
+			if (this._view._canFillRect && this.backgroundColor) {
 				ctx.fillStyle = this.backgroundColor;
 				//ctx.fillRect(0, 0, width, height);
 			}
+			this._view._canFillRect = false;
 
 			var viewport = opts.viewport;
 			//this._view.render && this._view.render(ctx, opts);

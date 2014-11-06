@@ -59,9 +59,9 @@ exports = function (opts) {
 	
 	ctx.clipRect = function (x, y, w, h) {
 		//debugger;
-		// ctx.beginPath();
-		// ctx.rect(x, y, w, h);
-		// ctx.clip();
+		ctx.beginPath();
+		ctx.rect(x, y, w, h);
+		ctx.clip();
 	}
 	
 	ctx.swap = function () {};
