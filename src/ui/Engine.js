@@ -375,7 +375,7 @@ var Engine = exports = Class(Emitter, function (supr) {
 			// even if we don't repaint, we need to paint at least 1 more time
 			// for devices that use multiple buffers (like the ios, I think...)
 			--this._doubleBufferedState;
-			this.render(dt);
+			//this.render(dt);
 		} else if (doRepaint) {
 			this._doubleBufferedState = 3;
 			this.render(dt);
