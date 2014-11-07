@@ -126,6 +126,11 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			if (superview == superview._superview) {
 				break;
 			}
+
+			if (superview._needsRerender) {
+				break;
+			}
+
 			superview._needsRerender = true;
 
 			superview = superview._superview;
@@ -211,7 +216,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		try {
 			if (this._view._canFillRect && this.backgroundColor) {
 				ctx.fillStyle = this.backgroundColor;
-				//ctx.fillRect(0, 0, width, height);
+				ctx.fillRect(0, 0, width, height);
 			}
 			this._view._canFillRect = false;
 
