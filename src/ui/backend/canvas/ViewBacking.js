@@ -27,10 +27,11 @@ import util.setProperty as setProperty;
 var _styleKeys = {};
 
 function setNeedsRerenderToSubviews (superview) {
-	var subviews = superview._subviews;
-	var i = subviews.length;
+	var subviews = superview._subviews || [];
+	var i = subviews.length-1;
+	var view;
 
-	while (view = subviews[i++]) {
+	while (view = subviews[i--]) {
 		view._needsRerender = true;
 		view._canFillRect = true;
 		setNeedsRerenderToSubviews(view);	
@@ -119,6 +120,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	this.setNeedsRerenderToSuperViews = function () {
 		var superview = this._superview; //or this._view._superview;
 
+		//@todo: Если _needsRerender уже выставлен то нет смысла подниматься выше
 		while (superview) {
 
 			if (superview == superview._superview) {
@@ -131,7 +133,8 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	}
 
 	this.rerenderSubViews = function () {
-		setNeedsRerenderToSubviews(this._view.__view);	
+		//this._view._subviews[0]._subviews
+		setNeedsRerenderToSubviews(this._view);	
 	}
 
 	this.wrapRender = function (ctx, opts) {
@@ -141,7 +144,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			//console.log('abended');
 			return;
 		}
-		//console.log('render is called');
+		//console.log('rendering ' + this._view.toString());
 		//this.__firstRender = true;
 		//61 - 78 level
 		this._view._needsRerender = false;
