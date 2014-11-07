@@ -105,11 +105,14 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		if (this._view._needsRepaint) {
 			this._view._needsRepaint = false;
 			//debugger;
-			app.needsRepaint();
+			
 			this.setNeedsRerenderToSuperViews();
-			setNeedsRerenderToSubviews(this._view.__view);
+			//setNeedsRerenderToSubviews(this._view.__view);
+			this.rerenderSubViews();
 			this._view._needsRerender = true;
 			this._view._canFillRect = true;
+
+			app.needsRepaint();
 		}
 	}
 
@@ -125,6 +128,10 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 
 			superview = superview._superview;
 		}
+	}
+
+	this.rerenderSubViews = function () {
+		setNeedsRerenderToSubviews(this._view.__view);	
 	}
 
 	this.wrapRender = function (ctx, opts) {
