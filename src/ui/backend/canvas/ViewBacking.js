@@ -52,10 +52,10 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		this._view._canFillRect = true;
 
 		//console.log(device.width);
-		this._buffer = new Context2D({
-			width: device.width,
-			height: device.height
-		});
+		// this._buffer = new Context2D({
+		// 	width: device.width,
+		// 	height: device.height
+		// });
 	}
 
 	this.getSuperview = function () { return this._superview; }
@@ -204,6 +204,18 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 
 		if (this.clip) { ctx.clipRect(0, 0, width, height); }
 
+
+		if (!this._view._needsRerender) {
+			//console.log('chached');
+			ctx.drawImage(this._buffer.getElement(), 0, 0);
+			//ctx.clearFilters();
+			ctx.restore();
+
+			ViewBacking.absScale /= this.scale;
+			return;	
+		}
+
+
 		var filters = {};
 		var filter = this._view.getFilter();
 		if (filter) {
@@ -228,14 +240,13 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			);
 		}
 
-		if (!this._view._needsRerender) {
-			ctx.drawImage(this._buffer.getElement(), 0, 0);
-			ctx.clearFilters();
-			ctx.restore();
-
-			ViewBacking.absScale /= this.scale;
-			return;	
+		if (!this._buffer) {
+			this._buffer = new Context2D({
+				width: width,
+				height: height
+			});	
 		}
+		this._buffer.clearRect(0, 0, width, height);
 
 		try {
 			if (this._view._canFillRect && this.backgroundColor) {
@@ -247,7 +258,6 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			var viewport = opts.viewport;
 			//this._view.render && this._view.render(ctx, opts);
 			if (this._view.render ) {
-				this._buffer.clearRect(0, 0, device.width, device.height);
 				//this._view.render(ctx, opts);
 				this._view.render(this._buffer, opts);
 			}
@@ -257,6 +267,8 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 
 		} finally {
 			ctx.drawImage(this._buffer.getElement(), 0, 0);
+			this._view._needsRerender = false;
+
 			ctx.clearFilters();
 			ctx.restore();
 
