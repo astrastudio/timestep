@@ -405,8 +405,8 @@ var Engine = exports = Class(Emitter, function (supr) {
 			this._ctx.swap();
 		}
 
-		console.log('Cached count: ' + device._cachedCount);
-		console.log('Rendered count: ' + device._renderedCount);
+		//console.log('Cached count: ' + device._cachedCount);
+		//console.log('Rendered count: ' + device._renderedCount);
 	};
 
 	this.needsRepaint = function () {

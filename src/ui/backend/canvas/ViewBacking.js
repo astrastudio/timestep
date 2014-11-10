@@ -208,6 +208,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		if (!this._view._needsRerender) {
 			device._cachedCount++;
 			//console.log('chached');
+
 			ctx.drawImage(this._buffer.getElement(), 0, 0);
 			//ctx.clearFilters();
 			ctx.restore();
@@ -250,7 +251,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		}
 		this._buffer.clearRect(0, 0, width, height);
 
-		try {
+		//try {
 			if (this._view._canFillRect && this.backgroundColor) {
 				ctx.fillStyle = this.backgroundColor;
 				ctx.fillRect(0, 0, width, height);
@@ -267,7 +268,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			this._renderSubviews(this._buffer, opts);
 			opts.viewport = viewport;
 
-		} finally {
+		//} finally {
 			ctx.drawImage(this._buffer.getElement(), 0, 0);
 			this._view._needsRerender = false;
 
@@ -275,7 +276,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			ctx.restore();
 
 			ViewBacking.absScale /= this.scale;
-		}
+		//}
 	}
 
 	this._renderSubviews = function (ctx, opts) {
