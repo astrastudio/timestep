@@ -23,6 +23,8 @@
 import ..strPad;
 import ..BaseBacking;
 import util.setProperty as setProperty;
+import device;
+import platforms.browser.Context2D as Context2D;
 
 var _styleKeys = {};
 
@@ -45,8 +47,15 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	this.init = function (view) {
 		this._view = view;
 		this._subviews = [];
+		
 		this._view._needsRerender = true;
 		this._view._canFillRect = true;
+
+		//console.log(device.width);
+		this._buffer = new Context2D({
+			width: device.width,
+			height: device.height
+		});
 	}
 
 	this.getSuperview = function () { return this._superview; }
@@ -145,14 +154,16 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 	this.wrapRender = function (ctx, opts) {
 		if (!this.visible) { return; }
 
-		if (!this._view._needsRerender) {
-			//console.log('abended');
-			return;
-		}
+		// if (!this._view._needsRerender) {
+		// 	//console.log('abended');
+		// 	ctx.drawImage(this._buffer.getElement(), 0, 0);
+		// 	return;
+		// }
 		//console.log('rendering ' + this._view.toString());
 		//this.__firstRender = true;
 		//61 - 78 level
-		this._view._needsRerender = false;
+
+		//this._view._needsRerender = false;
 
 		if (!this.__firstRender) { this._view.needsReflow(true); }
 		if (this._needsSort) { this._needsSort = false; this._subviews.sort(); }
@@ -162,6 +173,10 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 		if (width < 0 || height < 0) { return; }
 
 		ctx.save();
+
+		//ctx.fillStyle = 'green';
+		//ctx.fillRect(0, 0, device.width, device.height);
+		//ctx.clearRect(0, 0, device.width, device.height);
 
 		ctx.translate(this.x + this.anchorX + this.offsetX, this.y + this.anchorY + this.offsetY);
 
@@ -213,6 +228,15 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			);
 		}
 
+		if (!this._view._needsRerender) {
+			ctx.drawImage(this._buffer.getElement(), 0, 0);
+			ctx.clearFilters();
+			ctx.restore();
+
+			ViewBacking.absScale /= this.scale;
+			return;	
+		}
+
 		try {
 			if (this._view._canFillRect && this.backgroundColor) {
 				ctx.fillStyle = this.backgroundColor;
@@ -223,14 +247,19 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			var viewport = opts.viewport;
 			//this._view.render && this._view.render(ctx, opts);
 			if (this._view.render ) {
-				this._view.render(ctx, opts);
+				this._buffer.clearRect(0, 0, device.width, device.height);
+				//this._view.render(ctx, opts);
+				this._view.render(this._buffer, opts);
 			}
-			this._renderSubviews(ctx, opts);
+			//this._renderSubviews(ctx, opts);
+			this._renderSubviews(this._buffer, opts);
 			opts.viewport = viewport;
 
 		} finally {
+			ctx.drawImage(this._buffer.getElement(), 0, 0);
 			ctx.clearFilters();
 			ctx.restore();
+
 			ViewBacking.absScale /= this.scale;
 		}
 	}
