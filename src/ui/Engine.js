@@ -390,6 +390,9 @@ var Engine = exports = Class(Emitter, function (supr) {
 			this._ctx && this._ctx.clear();
 		}
 
+		device._cachedCount = 0;
+		device._renderedCount = 0;
+
 		this._view.__view.constructor.absScale = 1;
 		this._view.__view.wrapRender(this._ctx, {});
 		this.publish('Render', this._ctx);
@@ -401,6 +404,9 @@ var Engine = exports = Class(Emitter, function (supr) {
 
 			this._ctx.swap();
 		}
+
+		console.log('Cached count: ' + device._cachedCount);
+		console.log('Rendered count: ' + device._renderedCount);
 	};
 
 	this.needsRepaint = function () {

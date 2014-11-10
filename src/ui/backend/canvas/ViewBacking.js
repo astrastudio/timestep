@@ -206,6 +206,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 
 
 		if (!this._view._needsRerender) {
+			device._cachedCount++;
 			//console.log('chached');
 			ctx.drawImage(this._buffer.getElement(), 0, 0);
 			//ctx.clearFilters();
@@ -215,6 +216,7 @@ var ViewBacking = exports = Class(BaseBacking, function () {
 			return;	
 		}
 
+		device._renderedCount++;
 
 		var filters = {};
 		var filter = this._view.getFilter();
