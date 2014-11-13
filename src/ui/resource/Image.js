@@ -313,11 +313,11 @@ exports = Class(lib.PubSub, function () {
 
 	var isNative = GLOBAL.NATIVE && !device.simulatingMobileNative;
 	var SLICE = Array.prototype.slice;
-	if (!isNative) {
-		var Canvas = device.get('Canvas');
-		var _filterCanvas = new Canvas();
-		var _filterCtx = _filterCanvas.getContext('2d');
-	};
+	// if (!isNative) {
+	// 	var Canvas = device.get('Canvas');
+	// 	var _filterCanvas = new Canvas();
+	// 	var _filterCtx = _filterCanvas.getContext('2d');
+	// };
 
 	this.render = function (ctx, destX, destY, destW, destH) {
 		if (!this._cb.fired()) { return; }
