@@ -23,7 +23,7 @@
 var _onTick = null,
 	disableRequestAnimFrame = false,
 	disablePostMessage = true,
-	asFastAsPossible = false,
+	asFastAsPossible = true,
 	MIN_DT = 16;
 
 if (window.postMessage) {

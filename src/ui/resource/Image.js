@@ -320,6 +320,8 @@ exports = Class(lib.PubSub, function () {
 	};
 
 	this.render = function (ctx, destX, destY, destW, destH) {
+		//return;
+		debugger;
 		if (!this._cb.fired()) { return; }
 
 		try {
@@ -367,89 +369,89 @@ exports = Class(lib.PubSub, function () {
 				}
 			}
 
-			var renderArgs = arguments, img = this;
+			//var renderArgs = arguments, img = this;
 
-			function applyOperation(color, op1, op2) {
-				_filterCanvas.width = destW;
-				_filterCanvas.height = destH;
-				_filterCtx.globalCompositeOperation = 'source-over';
-				img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
+			// function applyOperation(color, op1, op2) {
+			// 	_filterCanvas.width = destW;
+			// 	_filterCanvas.height = destH;
+			// 	_filterCtx.globalCompositeOperation = 'source-over';
+			// 	img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
 
-				_filterCtx.globalCompositeOperation = op1;
-				_filterCtx.fillStyle = "rgba(" + color.r  + "," + color.g + "," + color.b + "," + color.a + ")";
-				_filterCtx.fillRect(destX || 0, destY || 0, destW || map.width, destH || map.height);
+			// 	_filterCtx.globalCompositeOperation = op1;
+			// 	_filterCtx.fillStyle = "rgba(" + color.r  + "," + color.g + "," + color.b + "," + color.a + ")";
+			// 	_filterCtx.fillRect(destX || 0, destY || 0, destW || map.width, destH || map.height);
 
-				var oldCompositeOperation = ctx.globalCompositeOperation;
-				ctx.globalCompositeOperation = op2;
-				ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
-				ctx.globalCompositeOperation = oldCompositeOperation;
-			}
+			// 	var oldCompositeOperation = ctx.globalCompositeOperation;
+			// 	ctx.globalCompositeOperation = op2;
+			// 	ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
+			// 	ctx.globalCompositeOperation = oldCompositeOperation;
+			// }
 
 			// Rendering engine flags.
-			var isWebkit = /WebKit/.exec(navigator.appVersion);
-			if (!isNative && ctx.filters) {
+			// var isWebkit = /WebKit/.exec(navigator.appVersion);
+			// if (!isNative && ctx.filters) {
 
-				if (ctx.filters.LinearAdd) {
-					var f = ctx.filters.LinearAdd.get();
-					applyOperation(f, 'source-in', 'lighter');
-				}
+			// 	if (ctx.filters.LinearAdd) {
+			// 		var f = ctx.filters.LinearAdd.get();
+			// 		applyOperation(f, 'source-in', 'lighter');
+			// 	}
 
-				if (ctx.filters.Tint) {
-					var f = ctx.filters.Tint.get();
-					var color = {r: f.r, g: f.g, b: f.b, a: f.a};
-					applyOperation(color, 'source-in', 'source-over');
-				}
+			// 	if (ctx.filters.Tint) {
+			// 		var f = ctx.filters.Tint.get();
+			// 		var color = {r: f.r, g: f.g, b: f.b, a: f.a};
+			// 		applyOperation(color, 'source-in', 'source-over');
+			// 	}
 
-				if (ctx.filters.Multiply) {
-					var f = ctx.filters.Multiply.get();
-					var imgData = this.getImageData();
-					var data = imgData.data;
+			// 	if (ctx.filters.Multiply) {
+			// 		var f = ctx.filters.Multiply.get();
+			// 		var imgData = this.getImageData();
+			// 		var data = imgData.data;
 					
-					for (var i = 0; i < data.length; i+=4) {
-						data[i] *= (f.r / 255);
-						data[i + 1] *= (f.g / 255); 
-						data[i + 2] *= (f.b / 255); 
-					}
+			// 		for (var i = 0; i < data.length; i+=4) {
+			// 			data[i] *= (f.r / 255);
+			// 			data[i + 1] *= (f.g / 255); 
+			// 			data[i + 2] *= (f.b / 255); 
+			// 		}
 
-					_filterCanvas.width = imgData.width;
-					_filterCanvas.height = imgData.height;
-					_filterCtx.putImageData(imgData, 0, 0);
-					ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
+			// 		_filterCanvas.width = imgData.width;
+			// 		_filterCanvas.height = imgData.height;
+			// 		_filterCtx.putImageData(imgData, 0, 0);
+			// 		ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
 
-				}
+			// 	}
 
-				if (ctx.filters.NegativeMask) {
-					var f = ctx.filters.NegativeMask.get();
-					_filterCanvas.width = destW;
-					_filterCanvas.height = destH;
-					_filterCtx.globalCompositeOperation = 'source-over';
-					f.imgObject.render.apply(f.imgObject, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
+			// 	if (ctx.filters.NegativeMask) {
+			// 		var f = ctx.filters.NegativeMask.get();
+			// 		_filterCanvas.width = destW;
+			// 		_filterCanvas.height = destH;
+			// 		_filterCtx.globalCompositeOperation = 'source-over';
+			// 		f.imgObject.render.apply(f.imgObject, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
 
-					_filterCtx.globalCompositeOperation = 'source-in';
-					img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
+			// 		_filterCtx.globalCompositeOperation = 'source-in';
+			// 		img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
 
-					var oldCompositeOperation = ctx.globalCompositeOperation;
-					ctx.globalCompositeOperation = 'source-over';
-					ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
-					ctx.globalCompositeOperation = oldCompositeOperation;
-				}
+			// 		var oldCompositeOperation = ctx.globalCompositeOperation;
+			// 		ctx.globalCompositeOperation = 'source-over';
+			// 		ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
+			// 		ctx.globalCompositeOperation = oldCompositeOperation;
+			// 	}
 
-				if (ctx.filters.PositiveMask) {
-					var f = ctx.filters.PositiveMask.get();
-					_filterCanvas.width = destW;
-					_filterCanvas.height = destH;
-					_filterCtx.globalCompositeOperation = 'source-over';
-					f.imgObject.render.apply(f.imgObject, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
+			// 	if (ctx.filters.PositiveMask) {
+			// 		var f = ctx.filters.PositiveMask.get();
+			// 		_filterCanvas.width = destW;
+			// 		_filterCanvas.height = destH;
+			// 		_filterCtx.globalCompositeOperation = 'source-over';
+			// 		f.imgObject.render.apply(f.imgObject, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
 
-					_filterCtx.globalCompositeOperation = 'source-out';
-					img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
+			// 		_filterCtx.globalCompositeOperation = 'source-out';
+			// 		img.render.apply(img, [_filterCtx].concat(SLICE.call(renderArgs, 1)));
 
-					var oldCompositeOperation = ctx.globalCompositeOperation;
-					ctx.globalCompositeOperation = 'source-over';
-					ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
-					ctx.globalCompositeOperation = oldCompositeOperation;
-				}
-			}
+			// 		var oldCompositeOperation = ctx.globalCompositeOperation;
+			// 		ctx.globalCompositeOperation = 'source-over';
+			// 		ctx.drawImage(_filterCanvas, destX || 0, destY || 0, destW || map.width, destH || map.height);
+			// 		ctx.globalCompositeOperation = oldCompositeOperation;
+			// 	}
+			// }
 		} catch(e) {}
 	};
 

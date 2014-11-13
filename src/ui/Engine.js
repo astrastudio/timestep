@@ -299,6 +299,7 @@ var Engine = exports = Class(Emitter, function (supr) {
 	};
 
 	this._tick = function (dt) {
+		//console.log('Engine::_tick');
 		//if the countdown is defined
 		if (this._countdown !== null) {
 			this._countdown--;
@@ -386,13 +387,13 @@ var Engine = exports = Class(Emitter, function (supr) {
 	};
 
 	this.render = function (dt) {
-		if (this._opts.clearEachFrame) {
-			this._ctx && this._ctx.clear();
-		}
+		// if (this._opts.clearEachFrame) {
+		// 	this._ctx && this._ctx.clear();
+		// }
 
 		this._view.__view.constructor.absScale = 1;
 		this._view.__view.wrapRender(this._ctx, {});
-		this.publish('Render', this._ctx);
+		//this.publish('Render', this._ctx);
 
 		if (this._ctx) {
 			if (DEBUG) {

@@ -155,6 +155,7 @@ var ImageView = exports = Class(View, function (supr) {
 	 */
 
 	this.render = function (ctx) {
+		debugger;
 		if (!this._img) { return; }
 
 		var s = this.style;
