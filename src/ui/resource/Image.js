@@ -320,8 +320,6 @@ exports = Class(lib.PubSub, function () {
 	};
 
 	this.render = function (ctx, destX, destY, destW, destH) {
-		//return;
-		debugger;
 		if (!this._cb.fired()) { return; }
 
 		try {
