@@ -114,7 +114,7 @@ var MultiSound = Class(function () {
 
 		// html5 hack for web browsers
 		var _checkPauseOnPlay = function (src) {
-				this.removeEventListener(arguments.callee);
+				this.removeEventListener('playing', arguments.callee);
 				if (isPaused()) {
 					this.pause();
 				}
@@ -273,8 +273,13 @@ exports = Class(Emitter, function (supr) {
 		// both are supported. Native will return true for everything, but
 		// on native, we store ogg files as .mp3 files, so return .mp3...
 		var sound = new Audio();
-		this._ext = sound.canPlayType("audio/mpeg") ? '.mp3'
-			: sound.canPlayType("audio/ogg") ? '.ogg' : '';
+
+		if (opts.ext) {
+			this._ext = opts.ext;
+		} else {
+			this._ext = sound.canPlayType("audio/mpeg") ? '.mp3'
+				: sound.canPlayType("audio/ogg") ? '.ogg' : '';	
+		}
 
 		if (!this._ext) {
 			this._ext = '.mp3';
@@ -290,6 +295,10 @@ exports = Class(Emitter, function (supr) {
 	};
 
 	this.getExt = function () { return this._ext; };
+
+	this.setExt = function (ext) {
+		this._ext = ext;
+	};
 
 	this.getPath = function (name) {
 		return (name) ? this._sounds[name].path : this._path;
